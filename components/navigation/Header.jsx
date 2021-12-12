@@ -4,7 +4,7 @@ import { Box, Stack, Text } from '@chakra-ui/react';
 
 const Header = ({ path }) => {
     return (
-        <Box p={4}>
+        <Box py={4}>
             <Stack direction="row" align="center">
                 <Text fontWeight="bold" letterSpacing="-0.05em" mr={4}>
                     NeoWs Portal
