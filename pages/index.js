@@ -9,7 +9,6 @@ const Home = ({ data, error }) => {
                 <meta name="description" content="NeoWs Portal" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <section className=""></section>
         </>
     );
 };
