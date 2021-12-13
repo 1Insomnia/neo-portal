@@ -1,5 +1,4 @@
 import NavLink from './NavLink';
-
 import { Box, Stack, Text } from '@chakra-ui/react';
 
 const Header = ({ path }) => {
@@ -9,7 +8,7 @@ const Header = ({ path }) => {
                 <Text fontWeight="bold" letterSpacing="-0.05em" mr={4}>
                     NeoWs Portal
                 </Text>
-                <NavLink href="/" path={path}>
+                <NavLink href="/?page=0" path={path}>
                     Home
                 </NavLink>
                 <NavLink href="/lookup" path={path}>

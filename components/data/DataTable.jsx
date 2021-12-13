@@ -14,7 +14,6 @@ const DataTable = ({ columns, data }) => {
         columns,
         data,
     });
-
     return (
         <Table {...getTableProps()}>
             <Thead>
