@@ -1,10 +1,37 @@
+import { useMemo } from 'react';
 import Head from 'next/head';
+import { Heading } from '@chakra-ui/react';
 import { fetchBrowse } from '../lib/fetchData';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, TableCaption } from '@chakra-ui/react';
+import DataTable from '../components/data/DataTable';
 
 const Home = ({ data, error }) => {
-    const { near_earth_objects } = data;
-    console.log(near_earth_objects);
+    console.log(data);
+
+    const columns = useMemo(
+        () => [
+            {
+                Header: 'ID',
+                accessor: 'id',
+            },
+            {
+                Header: 'Name',
+                accessor: 'name',
+            },
+            {
+                Header: 'Designation',
+                accessor: 'designation',
+            },
+            {
+                Header: 'Abs Magnitude',
+                accessor: 'absMag',
+            },
+            {
+                Header: 'Hazard',
+                accessor: 'hazard',
+            },
+        ],
+        []
+    );
 
     return (
         <>
@@ -13,38 +40,29 @@ const Home = ({ data, error }) => {
                 <meta name="description" content="NeoWs Portal" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Box py={4} as="section">
-                {!error && (
-                    <Table>
-                        <TableCaption placement="top">Near Earth Objects</TableCaption>
-                        <Thead>
-                            <Tr>
-                                <Th>Name</Th>
-                                <Th>ABS Mag</Th>
-                                <Th>Hazard</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {near_earth_objects.map(item => (
-                                <Tr key={item.id}>
-                                    <Td>{item.name}</Td>
-                                    <Td>{item.absolute_magnitude_h}</Td>
-                                    <Td>{item.is_potentially_hazardous_asteroid ? 'true' : 'false'}</Td>
-                                </Tr>
-                            ))}
-                        </Tbody>
-                    </Table>
-                )}
-            </Box>
+            <Heading as="h1">Browse</Heading>
+            <DataTable columns={columns} data={data} />
         </>
     );
 };
 
 export const getServerSideProps = async () => {
-    const { data, error } = await fetchBrowse();
+    const {
+        data: { near_earth_objects },
+        error,
+    } = await fetchBrowse(0);
+
+    const dataSet = near_earth_objects.map(item => ({
+        id: item.id,
+        name: item.name_limited,
+        designation: item.designation,
+        absMag: item.absolute_magnitude_h,
+        hazard: item.is_potentially_hazardous_asteroid.toString(),
+    }));
+
     return {
         props: {
-            data: data,
+            data: dataSet,
             error: error,
         },
     };

@@ -6,7 +6,9 @@ const Main = ({ children, path }) => {
     return (
         <Container maxW="container.md">
             <Header path={path} />
-            <Box as="main">{children}</Box>
+            <Box as="main" py={8}>
+                {children}
+            </Box>
             <Footer />
         </Container>
     );
