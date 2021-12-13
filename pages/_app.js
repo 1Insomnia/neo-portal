@@ -8,7 +8,7 @@ const MyApp = ({ Component, pageProps, router }) => {
     return (
         <ChakraProvider theme={theme}>
             <Layout path={router.asPath}>
-                <Component {...pageProps} />
+                <Component {...pageProps} key={router.route} />
             </Layout>
         </ChakraProvider>
     );

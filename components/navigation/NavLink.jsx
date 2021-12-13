@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import NextLink from 'next/link';
-import { Link, MenuList, MenuItem } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/react';
 
 const NavLink = ({ href, path, children }) => {
     const active = path === href;

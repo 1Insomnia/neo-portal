@@ -1,11 +1,11 @@
 import { useMemo, useEffect, useReducer } from 'react';
 import Head from 'next/head';
-import { Flex, Heading, Link } from '@chakra-ui/react';
+import { Flex, Heading, Link, LinkBox } from '@chakra-ui/react';
 import { fetchBrowse } from '../lib/fetchData';
 import DataTable from '../components/data/DataTable';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { ChevronLeftIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -18,9 +18,10 @@ const reducer = (state, action) => {
     }
 };
 
-const Home = ({ data, error, page }) => {
+const Home = ({ data, error, page, pageInfos }) => {
     const router = useRouter();
     const [state, dispatch] = useReducer(reducer, { page: page });
+    console.log(pageInfos);
 
     useEffect(() => {
         router.push({
@@ -65,6 +66,10 @@ const Home = ({ data, error, page }) => {
         dispatch({ type: 'NEXT_PAGE' });
     };
 
+    const handleMiddlePage = e => {
+        dispatch({ type: 'MIDDLE_PAGE' });
+    };
+
     return (
         <>
             <Head>
@@ -72,9 +77,14 @@ const Home = ({ data, error, page }) => {
                 <meta name="description" content="NeoWs Portal" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Heading as="h1">Browse</Heading>
+            <Heading as="h1" mb={4} color="teal">
+                Browse
+            </Heading>
+            <Heading as="h2" mb={10}>
+                {pageInfos.total_pages} Elements
+            </Heading>
             <DataTable columns={columns} data={data} />
-            <Flex align="center" justify="space-between" mt={4}>
+            <Flex align="center" justify="space-between" mt={8}>
                 <NextLink href="/">
                     <Link onClick={handlePreviousPage}>
                         <ChevronLeftIcon />
@@ -82,7 +92,10 @@ const Home = ({ data, error, page }) => {
                     </Link>
                 </NextLink>
                 <NextLink href="/">
-                    <Link onClick={handleNextPage}>Next Page</Link>
+                    <Link onClick={handleNextPage}>
+                        Next Page
+                        <ChevronRightIcon />
+                    </Link>
                 </NextLink>
             </Flex>
         </>
@@ -93,7 +106,7 @@ export const getServerSideProps = async ({ query }) => {
     const page = query.page ? parseInt(query.page) : 0;
 
     const {
-        data: { near_earth_objects },
+        data: { near_earth_objects, page: pageInfos },
         error,
     } = await fetchBrowse(page);
 
@@ -110,6 +123,7 @@ export const getServerSideProps = async ({ query }) => {
             data: dataSet,
             error: error,
             page: page,
+            pageInfos: pageInfos,
         },
     };
 };
