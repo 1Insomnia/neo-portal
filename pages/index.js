@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useReducer } from 'react';
 import Head from 'next/head';
-import { Flex, Heading, Link, LinkBox } from '@chakra-ui/react';
+import { Flex, Heading, Box, Link } from '@chakra-ui/react';
 import { fetchBrowse } from '../lib/fetchData';
 import DataTable from '../components/data/DataTable';
 import NextLink from 'next/link';
@@ -73,31 +73,37 @@ const Home = ({ data, error, page, pageInfos }) => {
     return (
         <>
             <Head>
-                <title>NeoWs Portal</title>
-                <meta name="description" content="NeoWs Portal" />
+                <title>Neo Portal</title>
+                <meta name="description" content="Neo Portal" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Heading as="h1" mb={4} color="teal">
                 Browse
             </Heading>
-            <Heading as="h2" mb={10}>
-                {pageInfos.total_pages} Elements
-            </Heading>
-            <DataTable columns={columns} data={data} />
-            <Flex align="center" justify="space-between" mt={8}>
-                <NextLink href="/">
-                    <Link onClick={handlePreviousPage}>
-                        <ChevronLeftIcon />
-                        Prev Page
-                    </Link>
-                </NextLink>
-                <NextLink href="/">
-                    <Link onClick={handleNextPage}>
-                        Next Page
-                        <ChevronRightIcon />
-                    </Link>
-                </NextLink>
-            </Flex>
+            {!error ? (
+                <Box>
+                    <Heading as="h2" mb={10}>
+                        {pageInfos.total_elements} Elements
+                    </Heading>
+                    <DataTable columns={columns} data={data} />
+                    <Flex align="center" justify="space-between" mt={8}>
+                        <NextLink href="/">
+                            <Link onClick={handlePreviousPage}>
+                                <ChevronLeftIcon />
+                                Prev Page
+                            </Link>
+                        </NextLink>
+                        <NextLink href="/">
+                            <Link onClick={handleNextPage}>
+                                Next Page
+                                <ChevronRightIcon />
+                            </Link>
+                        </NextLink>
+                    </Flex>
+                </Box>
+            ) : (
+                <Box>{error}</Box>
+            )}
         </>
     );
 };
@@ -110,22 +116,29 @@ export const getServerSideProps = async ({ query }) => {
         error,
     } = await fetchBrowse(page);
 
-    const dataSet = near_earth_objects.map(item => ({
-        id: item.id,
-        name: item.name,
-        designation: item.designation,
-        absMag: item.absolute_magnitude_h,
-        hazard: item.is_potentially_hazardous_asteroid.toString(),
-    }));
-
-    return {
-        props: {
-            data: dataSet,
-            error: error,
-            page: page,
-            pageInfos: pageInfos,
-        },
-    };
+    if (!error) {
+        const dataSet = near_earth_objects.map(item => ({
+            id: item.id,
+            name: item.name,
+            designation: item.designation,
+            absMag: item.absolute_magnitude_h,
+            hazard: item.is_potentially_hazardous_asteroid.toString(),
+        }));
+        return {
+            props: {
+                data: dataSet,
+                error: error,
+                page: page,
+                pageInfos: pageInfos,
+            },
+        };
+    } else {
+        return {
+            props: {
+                error: error,
+            },
+        };
+    }
 };
 
 export default Home;
